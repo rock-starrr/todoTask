@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { Inter } from 'next/font/google'
 import { AddTodo } from "@/components/Modals/AddTodo";
 import { getData, setCompletedTodo } from "@/lib/Slices/TodoSlice";
 import { useEffect } from "react";
@@ -14,8 +13,6 @@ import dynamic from 'next/dynamic';
 const CustomEditor = dynamic(() => {
     return import('@/components/custom-editor');
 }, { ssr: false });
-
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const dispatch = useDispatch()
