@@ -1,118 +1,107 @@
 import Image from 'next/image'
 import { Inter } from 'next/font/google'
+import { AddTodo } from "@/components/Modals/AddTodo";
+import { getData, setCompletedTodo } from "@/lib/Slices/TodoSlice";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FaDotCircle } from "react-icons/fa";
+import { EditTodoModal } from "@/components/Modals/EditTodoModal";
+import { DeleteTodomodal } from "@/components/Modals/DeleteTodomodal";
+import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import dynamic from 'next/dynamic';
+
+const CustomEditor = dynamic(() => {
+    return import('@/components/custom-editor');
+}, { ssr: false });
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+  const dispatch = useDispatch()
+    const { todos } = useSelector((state) => state.todo)
+
+    useEffect(() => {
+        dispatch(getData())
+    }, [])
+
+    const todoCard = todos.map((todo) =>
+        <div key={todo?.id} className="p-4">
+            <div className="max-w-sm p-6 bg-white border shadow-md sm:rounded border-gray-200 rounded-xl  dark:bg-gray-800 dark:border-gray-700">
+                <div>
+                     <div
+                         className="mb-2 line-clamp-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                    >
+                        {todo?.title}
+                    </div>
+                </div>
+                <p className="mb-2 items-start flex text-sm text-gray-700 dark:text-gray-400 line-clamp-1">
+                    Status:
+                    {todo?.status === 'Todo' &&
+                        <span className={`text-[#656F7D] text-xs p-1`}>
+                            <FaDotCircle />
+                        </span>
+                    }
+                    {todo?.status === 'Starting soon' &&
+                        <span className={`text-[#88b2be] text-xs p-1`}>
+                            <FaDotCircle />
+                        </span>
+                    }
+                    {todo?.status === 'In progress' &&
+                        <span className={`text-[#40A5E5] text-xs p-1`}>
+                            <FaDotCircle />
+                        </span>
+                    }
+                    {todo?.status === 'In QA' &&
+                        <span className={`text-[#7F77F1] text-xs p-1`}>
+                            <FaDotCircle />
+                        </span>
+                    }
+                    {todo?.status === 'Completed' &&
+                        <span className={`text-[#33A069] text-xs p-1`}>
+                            <FaDotCircle />
+                        </span>
+                    }
+                    <span className="line-clamp-1">{todo?.status}</span>
+                </p>
+                <div className="flex space-x-2 w-1/2">
+                    <EditTodoModal id={todo?.id} />
+                    <DeleteTodomodal id={todo?.id} />
+                </div>
+                <div>
+                    <button
+                        className="bg-green-700 mt-1 mr-1 p-1 pl-3 pr-3 text-white rounded-full outline-none text-sm ext-center dark:bg-green-500 disabled:bg-green-500 dark:disabled:bg-green-300"
+                        type="button"
+                        disabled={todo?.status === 'Completed'}
+                        onClick={() => {
+                            if (confirm(`Are you sure to complete this task because you can't edit todo after Mark as completed`)) {
+                                dispatch(setCompletedTodo(todo))
+                            }
+                        }}
+                    >
+                        Mark as completed
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
+    )
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    return (
+        <>
+            <div className="flex justify-center dark:bg-black">
+                <div className="w-full p-8">
+                    <h1 className='text-center text-2xl font-bold leading-9 tracking-tight text-blue-800'>
+                        Todo List
+                    </h1>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+                    <AddTodo />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        {todoCard}
+                    </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+                </div>
+            </div>
+        </>
+    )
 }
