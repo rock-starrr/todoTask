@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { AddTodo } from "@/components/Modals/AddTodo";
 import { getData, setCompletedTodo } from "@/lib/Slices/TodoSlice";
 import { useEffect } from "react";
@@ -6,13 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { FaDotCircle } from "react-icons/fa";
 import { EditTodoModal } from "@/components/Modals/EditTodoModal";
 import { DeleteTodomodal } from "@/components/Modals/DeleteTodomodal";
-import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import dynamic from 'next/dynamic';
-
-const CustomEditor = dynamic(() => {
-    return import('@/components/custom-editor');
-}, { ssr: false });
 
 export default function Home() {
   const dispatch = useDispatch()
