@@ -47,7 +47,7 @@ export const DeleteTodomodal = ({id}) => {
                                     setOpen(!open)
                                 }}
                             >
-                                Yes, I'm sure
+                                Yes, I am sure
                             </button>
                             <button
                                 type="button"

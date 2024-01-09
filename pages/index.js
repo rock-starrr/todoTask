@@ -12,7 +12,7 @@ export default function Home() {
 
     useEffect(() => {
         dispatch(getData())
-    }, [])
+    }, [dispatch])
 
     const todoCard = todos.map((todo) =>
         <div key={todo?.id} className="p-4">

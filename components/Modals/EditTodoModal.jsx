@@ -20,7 +20,8 @@ export const EditTodoModal = ({ id }) => {
         setValue("id", data?.id)
         setValue("status", data?.status)
         setValue("title", data?.title)
-    }, [todos])
+        // eslint-disable-next-line
+    }, [todos, data ])
 
     const addTodoData = (data) => {
         const inputData = { ...data, description: ckData }
